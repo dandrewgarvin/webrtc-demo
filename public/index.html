@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEMO SOCKET</title>
+
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <input id="user-name" placeholder="Enter your name"/>
+    <button class="btn" onclick="getVideoStream()">Start Video</button>
+    <button class="btn" onclick="connect()">Connect to room</button>
+
+    <h1 class="title">Users:</h1>
+
+    <ul class="users" id="user-list"></ul>
+
+    <div class="video-container">
+      <video autoplay muted id="local-video"></video>
+      <video autoplay id="remote-video"></video>
+    </div>
+  </body>
+</html>
