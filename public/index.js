@@ -8,10 +8,12 @@ function init() {
   socket.on("user list updated", updateUsers);
   socket.on("incoming call", handleIncomingCall);
   socket.on("call rejected", () => {
+    updateStatus("idle - in room");
     alert("Your call has been rejected. Try again later!");
   });
 
   socket.on("call accepted", async (data) => {
+    updateStatus("starting call");
     console.log("Call has been accepted:", data);
 
     await peerConnection.setRemoteDescription(
@@ -25,6 +27,7 @@ function init() {
   });
 
   peerConnection.ontrack = function ({ streams }) {
+    updateStatus("receiving media stream");
     console.log("receiving a remote stream...");
     const remoteVideo = document.getElementById("remote-video");
     if (!remoteVideo.srcObject) {
@@ -33,27 +36,24 @@ function init() {
       remoteVideo.srcObject = streams[0];
     }
   };
-
-  // peerConnection.addEventListener("track", async (event) => {
-  //   if (!remoteStream) {
-  //     remoteStream = new MediaStream();
-  //     const remoteVideo = document.getElementById("remote-video");
-  //     remoteVideo.srcObject = remoteStream;
-  //   }
-
-  //   remoteStream.addTrack(event.track, remoteStream);
-  // });
 }
 
 init();
+
+function updateStatus(message) {
+  let status = document.getElementById("status");
+  status.innerText = message;
+}
 
 function connect() {
   const userName = document.getElementById("user-name").value;
 
   socket.emit("join", { name: userName });
+  updateStatus("idle - in room");
 }
 
 function updateUsers(data) {
+  updateStatus("receiving users");
   const users = document.getElementById("user-list");
   users.innerHTML = null;
 
@@ -66,9 +66,12 @@ function updateUsers(data) {
 
     users.appendChild(li);
   });
+
+  updateStatus("idle - in room");
 }
 
 async function callUser(id, again) {
+  updateStatus("calling user");
   console.log("calling user...", again);
   const offer = await peerConnection.createOffer();
 
@@ -83,6 +86,7 @@ async function callUser(id, again) {
 }
 
 function getVideoStream() {
+  updateStatus("getting video stream");
   navigator.getUserMedia(
     { video: true, audio: true },
     (stream) => {
@@ -103,6 +107,7 @@ function getVideoStream() {
 }
 
 async function handleIncomingCall(data) {
+  updateStatus("receiving call");
   console.log("receiving a call...", affirmCall);
   if (!affirmCall) {
     if (
@@ -119,6 +124,7 @@ async function handleIncomingCall(data) {
 
   affirmCall = true;
 
+  updateStatus("accepting call");
   console.log("accepting call...");
   await peerConnection.setRemoteDescription(
     new window.RTCSessionDescription(data.offer)
