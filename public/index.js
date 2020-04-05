@@ -23,6 +23,7 @@ function init() {
     if (!isAlreadyCalling) {
       callUser(data.socket, true);
       isAlreadyCalling = true;
+      updateStatus("on call");
     }
   });
 
@@ -140,4 +141,6 @@ async function handleIncomingCall(data) {
     answer,
     from: data.socket,
   });
+
+  updateStatus("on call");
 }
