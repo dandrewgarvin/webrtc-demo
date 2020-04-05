@@ -28,6 +28,8 @@ function init() {
     console.log("receiving a remote stream...");
     const remoteVideo = document.getElementById("remote-video");
     if (!remoteVideo.srcObject) {
+      console.log("streams", streams);
+
       remoteVideo.srcObject = streams[0];
     }
   };
